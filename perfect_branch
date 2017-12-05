@@ -1,0 +1,19 @@
+function perfect_branch(self, center, length, thickness, start_theta, theta)
+    length = length * 0.66
+    thickness = thickness * 0.9
+    if(length > 2):
+        right_theta = start_theta - theta
+        left_theta = start_theta + theta
+
+        #draw left and right branch
+        right_point = (center[0] + length * math.cos(right_theta), center[1] - length * math.sin(right_theta))
+        left_point = (center[0] + length * math.cos(left_theta), center[1] - length * math.sin(left_theta))
+
+        pygame.draw.line(self.screen, self.color, center, right_point, int(thickness))
+        pygame.draw.line(self.screen, self.color, center, left_point, int(thickness))
+
+        #continue branch left and right
+        self.perfect_branch(right_point, length, thickness, right_theta, theta)
+        self.perfect_branch(left_point, length, thickness, left_theta, theta)
+    end
+end
