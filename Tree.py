@@ -52,6 +52,31 @@ class Tree:
                 #continue branch left and right
                 self.random_branch(new_point, length, thickness, new_theta)       
 
+    def random_flower(self, center, length, thickness, start_theta): #the start theta defines the current planes rotation
+        thickness = float(thickness * 0.8)
+        num_branch = random.randrange(2,4)
+        for i in range(num_branch): #randomize the number of branches 
+            if(length > 2): 
+                length = length * float(random.randrange(50, 80)) / 100
+                theta = (float(random.randrange(50,100))/100 *  math.pi/4)
+                random_bin = random.randrange(0, 2)
+                if(random_bin == 1): 
+                    new_theta = start_theta - theta
+                else: 
+                    new_theta = start_theta + theta
+                
+                #draw branch
+                new_point = (center[0] + length * math.cos(new_theta), center[1] - length * math.sin(new_theta))
+                if(length > 30): 
+                    array = [0 for i in range(30)] 
+                    fractal_tools.random_koch(0, 29, 5, 0.5, array)
+                    pygame_tools.draw_lines(array, self.screen, self.color, center, new_point, thickness)
+
+                else: 
+                    pygame.draw.line(self.screen, self.color, center, new_point, int(thickness))
+                #continue branch left and right
+                self.random_branch(new_point, length, thickness, new_theta)       
+    
 
     def draw(self, center, length, thickness, theta):
         #first branch is always straight up (trunk)
