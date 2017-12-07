@@ -13,12 +13,9 @@ BLACK = (0, 0, 0)
 
 done = False
 screen.fill(WHITE)
-mytree = Tree.Tree(screen, BLACK)
-for i in range(4):
-    mytree.draw(((i+1) * (800/5), 600 + (random.randrange(-100,100))), 250, 4, 0)
 
-myland = Land.Land(screen, BLACK, (0, 400), (800, 400), 100, 100, 0.5)
-myland.draw()
+pygame.draw.polygon(screen, BLACK, [(200, 300), (225,200), (200,100), (175,200)])
+pygame.draw.polygon(screen, BLACK, [(200, 225), (300,200), (200,175), (100,200)])
         
 while not done: 
     for event in pygame.event.get(): 

@@ -70,4 +70,5 @@ def draw_lines(array, screen, color, point1, point2, thickness):
             point_arr[i+1][1] = yn2
 
             pygame.draw.line(screen, color, (xn, yn),(xn2, yn2), int(thickness))
+
         return(point_arr)

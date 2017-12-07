@@ -4,8 +4,6 @@ import Canvas
 
 #colors
 WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GREEN = (30, 86, 36)
 
 class Menu: 
     def __init__(self, canvas): 
@@ -38,17 +36,18 @@ class Menu:
         myfile.close()
 
         #fill the canvas the canvas
+        self.canvas.clear()
         self.canvas.update(myfile) 
 
 def main():
     pygame.init()
     #make screen
-    size = (1100, 1000)
+    size = (1074, 818)
     screen = pygame.display.set_mode(size)
     screen.fill(WHITE)
     pygame.display.update()
 
-    canvas = Canvas.Canvas(screen, WHITE, (50, 50), 1000, 900)
+    canvas = Canvas.Canvas(screen, WHITE, (25, 25), 1024, 768)
     menu = Menu(canvas)
    
     mainloop()
