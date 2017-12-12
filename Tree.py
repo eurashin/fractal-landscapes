@@ -33,7 +33,7 @@ class Tree:
         for i in range(num_branch): #randomize the number of branches 
             if(length > 2):
                 #randomize the branch length, angle, and direction it juts
-                length = length * float(random.randrange(50, 80)) / 100
+                length = length * float(random.randrange(50, 60)) / 100
                 theta = (float(random.randrange(50,100))/100 *  math.pi/4)
                 random_bin = random.randrange(0, 2)
                 if(random_bin == 1): 
@@ -51,17 +51,17 @@ class Tree:
                 else: 
                     pygame.draw.line(self.screen, self.color, center, new_point, int(thickness))
                 #continue branch left and right
-                self.random_branch(new_point, length, thickness, new_theta)       
+                self.random_branch(new_point, length, thickness, new_theta)     
 
-    def random_flower(self, center, length, thickness, start_theta): #the start theta defines the current planes rotation
+    def random_flower(self, center, length, thickness, start_theta, color): #the start theta defines the current planes rotation
         thickness = float(thickness * 0.8)
         num_branch = random.randrange(2,4)
         for i in range(num_branch): #randomize the number of branches 
             theta = (float(random.randrange(50,100))/100 *  math.pi/4)
             if(length < 2): #stop branching, flower
-                self.draw_flower(center, 4, theta, (244, 66, 217))
+                self.draw_flower(center, 4, theta, color)
             else: 
-                length = length * float(random.randrange(50, 80)) / 100
+                length = length * float(random.randrange(50, 60)) / 100
                 random_bin = random.randrange(0, 2)
                 if(random_bin == 1): 
                     new_theta = start_theta - theta
@@ -78,26 +78,60 @@ class Tree:
                 else: 
                     pygame.draw.line(self.screen, self.color, center, new_point, int(thickness))
                 #continue branch left and right
-                self.random_flower(new_point, length, thickness, new_theta)      
+                self.random_flower(new_point, length, thickness, new_theta, color)      
     
+    def pine_tree(self, center, olength, thickness, start_theta, color): 
+        thickness = 1
+        num_branch = random.randrange(8, 10)
+        interval = float(olength/(num_branch))
+        spot = 0
+        current_center = center
+        theta = ( math.pi/6)
+        new_theta = start_theta - theta
+        for i in range(1, num_branch + 1): 
+            length = olength * float(i)/num_branch * 0.4
+            if(length > 2):
+                current_center = (center[0] - spot*math.cos(start_theta), center[1] + spot*math.sin(start_theta))
+                spot = spot + interval
+                
+                #draw branch
+                new_point = (current_center[0] + (length * math.cos(new_theta)), current_center[1] - (length * math.sin(new_theta)))
+                opposite_new_point = (current_center[0] + (length * math.cos(start_theta + theta)), current_center[1] - (length * math.sin(start_theta + theta)))
+                
+                if(length < 4): 
+                    pygame.draw.line(self.screen, color, current_center, new_point, int(thickness))
+                    pygame.draw.line(self.screen, color, current_center, opposite_new_point, int(thickness))
+                else: 
+                    pygame.draw.line(self.screen, self.color, current_center, new_point, int(thickness))
+                    pygame.draw.line(self.screen, self.color, current_center, opposite_new_point, int(thickness))
+                
+                #continue branch left and right
+                self.pine_tree(new_point, length, thickness, new_theta, color)     
+                self.pine_tree(opposite_new_point, length, thickness, start_theta + theta, color)    
 
-    def draw(self, center, length, thickness, theta):
+                                    
+
+    def draw(self, center, length, thickness, theta, tree_type, color):
         #first branch is always straight up (trunk)
         if(theta == 0): #randomize tree
             trunk_length = length * float(random.randrange(40, 100)) / 100
 
-            two_variation = (float(random.randrange(70, 120))/100 * 3)
-            branch_trunk = float((trunk_length * 2)/ two_variation) #branches along top half of trunk
-            branchless_trunk = trunk_length - branch_trunk
-            num_branch = random.randrange(2, 5)
-            increment = float(branch_trunk) / num_branch #place branches along trunk on this increment
-            for i in range(num_branch): 
-                #50% to 100% of placement
-                percent = float(random.randrange(50, 100)) / 100
-                placement = branchless_trunk + (increment * i * percent)
-                #place random branching along spot on trunk
-                branch_center = (center[0], center[1] - placement)
-                self.random_flower(branch_center,placement, thickness, (math.pi/2))
+            if(tree_type != 2): 
+                two_variation = (float(random.randrange(70, 120))/100 * 3)
+                branch_trunk = float((trunk_length * 2)/ two_variation) #branches along top half of trunk
+                branchless_trunk = trunk_length - branch_trunk
+                num_branch = random.randrange(4, 7)
+                increment = float(branch_trunk) / num_branch #place branches along trunk on this increment
+                for i in range(num_branch): 
+                    #50% to 100% of placement
+                    percent = float(random.randrange(50, 100)) / 100
+                    placement = branchless_trunk + (increment * i * percent)
+                    #place random branching along spot on trunk
+                    branch_center = (center[0], center[1] - placement)
+                    if(tree_type == 0):
+                        self.random_branch(branch_center,placement, thickness, (math.pi/2))
+                    else:
+                        self.random_flower(branch_center,placement, thickness, (math.pi/2), color)
 
             
             #top of the tree
@@ -106,7 +140,13 @@ class Tree:
             array = [0 for i in range(30)] 
             fractal_tools.random_koch(0, 29, 5, 0.5, array)
             pygame_tools.draw_lines(array, self.screen, self.color, center, new_center, thickness)
-            self.random_flower(new_center, branch_trunk, thickness, (math.pi/2)) 
+            if(tree_type == 0): #basic 
+                self.random_branch(new_center, branch_trunk, thickness, (math.pi/2)) 
+            elif(tree_type == 1): #flowering
+                self.random_flower(new_center, branch_trunk, thickness, (math.pi/2), color) 
+            else: #pine
+                self.pine_tree(new_center, trunk_length, thickness, (math.pi/2), color)
+
         else: #perfect tree
             new_center = (center[0], center[1] - length)
             pygame.draw.line(self.screen, self.color, center, new_center, thickness)

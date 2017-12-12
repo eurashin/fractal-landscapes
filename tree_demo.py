@@ -14,8 +14,8 @@ BLACK = (0, 0, 0)
 done = False
 screen.fill(WHITE)
 
-pygame.draw.polygon(screen, BLACK, [(200, 300), (225,200), (200,100), (175,200)])
-pygame.draw.polygon(screen, BLACK, [(200, 225), (300,200), (200,175), (100,200)])
+mytree = Tree.Tree(screen, BLACK)
+mytree.draw((200, 500), 400, 4, 0, 2, (0,0,0))
         
 while not done: 
     for event in pygame.event.get(): 

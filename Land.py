@@ -5,7 +5,7 @@ import fractal_tools
 import pygame_tools
 
 class Land: 
-    def __init__(self, screen, color, point1, point2): 
+    def __init__(self, screen, color, point1, point2, canvas_height): 
         self.screen = screen
         self.color = color
         self.num_steps = 100
@@ -14,7 +14,7 @@ class Land:
         self.roughness = 0.5
         self.point1 = point1
         self.point2 = point2
-        self.array = [[0,0] for i in range(self.num_steps)]
+        self.array = [[0,canvas_height] for i in range(self.num_steps)]
 
     def draw(self, canvas_x, canvas_y, canvas_width, canvas_height):
         fractal_tools.random_koch(0, self.num_steps-1, self.displacement, self.roughness, self.terrain) 
