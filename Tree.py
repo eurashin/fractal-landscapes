@@ -10,9 +10,9 @@ class Tree:
         self.color = color
     
     def perfect_branch(self, center, length, thickness, start_theta, theta): #the start theta defines the current planes rotation
-        length = length * 0.66
+        length = length * 0.4
         thickness = thickness * 0.9
-        if(length > 30): 
+        if(length > 2): 
             right_theta = start_theta - theta
             left_theta = start_theta + theta
 
@@ -27,14 +27,19 @@ class Tree:
             self.perfect_branch(right_point, length, thickness, right_theta, theta)        
             self.perfect_branch(left_point, length, thickness, left_theta, theta)       
 
-    def random_branch(self, center, length, thickness, start_theta): #the start theta defines the current planes rotation
+    def random_branch(self, center, olength, thickness, start_theta): #the start theta defines the current planes rotation
         thickness = float(thickness * 0.8)
-        num_branch = random.randrange(2,4)
-        for i in range(num_branch): #randomize the number of branches 
-            if(length > 2):
-                #randomize the branch length, angle, and direction it juts
-                length = length * float(random.randrange(50, 60)) / 100
-                theta = (float(random.randrange(50,100))/100 *  math.pi/4)
+        num_branch = random.randrange(0,5)
+        if(num_branch > 0): 
+            interval = float(olength/(num_branch))
+        else: 
+            interval = 0
+        spot = interval
+        #make the top branch off many times
+        for i in range(random.randrange(1,3)): 
+            theta = (float(random.randrange(50,100))/100 *  math.pi/4)
+            if(olength > 2): #stop branching
+                length = olength * float(random.randrange(50, 70)) / 100
                 random_bin = random.randrange(0, 2)
                 if(random_bin == 1): 
                     new_theta = start_theta - theta
@@ -51,17 +56,44 @@ class Tree:
                 else: 
                     pygame.draw.line(self.screen, self.color, center, new_point, int(thickness))
                 #continue branch left and right
-                self.random_branch(new_point, length, thickness, new_theta)     
-
-    def random_flower(self, center, length, thickness, start_theta, color): #the start theta defines the current planes rotation
-        thickness = float(thickness * 0.8)
-        num_branch = random.randrange(2,4)
-        for i in range(num_branch): #randomize the number of branches 
+                self.random_branch(new_point, length, thickness, new_theta)      
+        for i in range(num_branch - 1): #randomize the number of branches 
             theta = (float(random.randrange(50,100))/100 *  math.pi/4)
-            if(length < 2): #stop branching, flower
-                self.draw_flower(center, 4, theta, color)
-            else: 
-                length = length * float(random.randrange(50, 60)) / 100
+            if(olength > 2): #stop branching
+                current_center = (center[0] - spot*math.cos(start_theta), center[1] + spot*math.sin(start_theta))
+                spot = spot + interval
+                length = olength * float(random.randrange(50, 70)) / 100
+                random_bin = random.randrange(0, 2)
+                if(random_bin == 1): 
+                    new_theta = start_theta - theta
+                else: 
+                    new_theta = start_theta + theta
+                
+                #draw branch
+                new_point = (current_center[0] + length * math.cos(new_theta), current_center[1] - length * math.sin(new_theta))
+                if(length > 30): 
+                    array = [0 for i in range(30)] 
+                    fractal_tools.random_koch(0, 29, 5, 0.5, array)
+                    pygame_tools.draw_lines(array, self.screen, self.color, current_center, new_point, thickness)
+
+                else: 
+                    pygame.draw.line(self.screen, self.color, current_center, new_point, int(thickness))
+                #continue branch left and right
+                self.random_branch(new_point, length, thickness, new_theta)      
+
+    def random_flower(self, center, olength, thickness, start_theta, color): #the start theta defines the current planes rotation
+        thickness = float(thickness * 0.8)
+        num_branch = random.randrange(0,5)
+        if(num_branch > 0): 
+            interval = float(olength/(num_branch))
+        else: 
+            interval = 0
+        spot =interval
+        #make the top branch off many times
+        for i in range(random.randrange(1,3)): 
+            theta = (float(random.randrange(50,100))/100 *  math.pi/4)
+            if(olength > 2): #stop branching
+                length = olength * float(random.randrange(50, 70)) / 100
                 random_bin = random.randrange(0, 2)
                 if(random_bin == 1): 
                     new_theta = start_theta - theta
@@ -77,6 +109,31 @@ class Tree:
 
                 else: 
                     pygame.draw.line(self.screen, self.color, center, new_point, int(thickness))
+                #continue branch left and right
+                self.random_flower(new_point, length, thickness, new_theta, color)      
+        for i in range(num_branch - 1): #randomize the number of branches 
+            theta = (float(random.randrange(50,100))/100 *  math.pi/4)
+            if(olength < 2): #stop branching, flower
+                self.draw_flower(center, 4, theta, color)
+            else: 
+                current_center = (center[0] - spot*math.cos(start_theta), center[1] + spot*math.sin(start_theta))
+                spot = spot + interval
+                length = olength * float(random.randrange(50, 70)) / 100
+                random_bin = random.randrange(0, 2)
+                if(random_bin == 1): 
+                    new_theta = start_theta - theta
+                else: 
+                    new_theta = start_theta + theta
+                
+                #draw branch
+                new_point = (current_center[0] + length * math.cos(new_theta), current_center[1] - length * math.sin(new_theta))
+                if(length > 30): 
+                    array = [0 for i in range(30)] 
+                    fractal_tools.random_koch(0, 29, 5, 0.5, array)
+                    pygame_tools.draw_lines(array, self.screen, self.color, current_center, new_point, thickness)
+
+                else: 
+                    pygame.draw.line(self.screen, self.color, current_center, new_point, int(thickness))
                 #continue branch left and right
                 self.random_flower(new_point, length, thickness, new_theta, color)      
     
@@ -117,10 +174,10 @@ class Tree:
             trunk_length = length * float(random.randrange(40, 100)) / 100
 
             if(tree_type != 2): 
-                two_variation = (float(random.randrange(70, 120))/100 * 3)
-                branch_trunk = float((trunk_length * 2)/ two_variation) #branches along top half of trunk
+                two_variation = (float(random.randrange(70, 120))/100 * 2)
+                branch_trunk = float((trunk_length)/ two_variation) #branches along top half of trunk
                 branchless_trunk = trunk_length - branch_trunk
-                num_branch = random.randrange(4, 7)
+                num_branch = random.randrange(2,6)
                 increment = float(branch_trunk) / num_branch #place branches along trunk on this increment
                 for i in range(num_branch): 
                     #50% to 100% of placement
@@ -129,9 +186,9 @@ class Tree:
                     #place random branching along spot on trunk
                     branch_center = (center[0], center[1] - placement)
                     if(tree_type == 0):
-                        self.random_branch(branch_center,placement, thickness, (math.pi/2))
+                        self.random_branch(branch_center,placement * 0.7, thickness, (math.pi/2))
                     else:
-                        self.random_flower(branch_center,placement, thickness, (math.pi/2), color)
+                        self.random_flower(branch_center,placement * 0.7, thickness, (math.pi/2), color)
 
             
             #top of the tree

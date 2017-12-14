@@ -75,7 +75,7 @@ class Canvas:
                 if(ranperm[i] == 0): 
                     #draw basic trees
                     mytree = Tree.Tree(self.screen, color_basic)
-                    mytree.draw((place, self.height), 300, 4, 0, 0, (0,0,0))
+                    mytree.draw((place, self.height), 200, 4, 0, 0, (0,0,0))
                 elif(ranperm[i] == 1):
                     #draw flower trees
                     mytree = Tree.Tree(self.screen, color_flower_bark)

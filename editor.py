@@ -77,7 +77,7 @@ class Menu:
         self.button_colors[5].grid(row=10, column=10, columnspan=2)
         Scale(self.win, variable=self.pine_num, orient=HORIZONTAL, from_=0, to=11).grid(row=11, column=8, columnspan=4)
         #submit button
-        Button(self.win, text="ENTER", font = label_font, height = 2, width = 15, command=self.submit_callback).grid(row=20, column=0, columnspan=8)
+        Button(self.win, text="ENTER", font = label_font, height = 2, width = 15, command=self.submit_callback).grid(row=20, column=0, columnspan=12)
     
     def custom_callback(self):
         if(self.type.get() == 4): #user can choose colors 
